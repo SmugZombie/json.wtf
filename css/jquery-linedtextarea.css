@@ -1,3 +1,4 @@
+
 /**
  * jQuery Lined Textarea Plugin
  *   http://alan.blog-city.com/jquerylinedtextarea.htm
@@ -67,7 +68,7 @@ textarea { resize:both; }
   top: 0;
   left: 0;
   z-index: 1;
-  background: #DADDDF;
+  background: #1a1a1b;
 }
 
 .linedwrap .codelines {
@@ -85,3 +86,4 @@ textarea { resize:both; }
 .linedwrap .codelines .lineselect {
 	color: red;
 }
+
