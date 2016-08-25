@@ -27,6 +27,7 @@ footer, header, hgroup, menu, nav, section {
 body {
 	line-height: 1;
 	overflow: hidden;
+	backround: #1a1a1b;
 }
 ol, ul {
 	list-style: none;
@@ -218,7 +219,23 @@ margin: 0;
 }
 
 .minify .icon {
-	background-position: -130px 0;
+	background-position: -133px 0;
+}
+
+.xml2json {
+	top: 370px;
+}
+
+.xml2json .icon {
+	background-position: -178px 0;
+}
+
+.json2xml {
+	top: 320px;
+}
+
+.json2xml .icon {
+	background-position: -155px 0;
 }
 
 .reset .icon {
@@ -856,8 +873,8 @@ font-weight:700;
 
 #help {
 	position: absolute;
-	bottom: 20px;
-	right: 200px;
+	bottom: 0px;
+	right: 5px;
 	z-index: 4;
 	color: rgb(185, 185, 185);
 	text-decoration: none;
