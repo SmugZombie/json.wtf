@@ -222,8 +222,24 @@ margin: 0;
 	background-position: -133px 0;
 }
 
+.download{
+        top: 370px;
+}
+
+.download .icon {
+	background-position: -225px 0;
+}
+
+.upload{
+        top: 320px;
+}
+
+.upload .icon {
+	background-position: -199px 0;
+}
+
 .xml2json {
-	top: 370px;
+	top: 470px;
 }
 
 .xml2json .icon {
@@ -231,7 +247,7 @@ margin: 0;
 }
 
 .json2xml {
-	top: 320px;
+	top: 420px;
 }
 
 .json2xml .icon {
