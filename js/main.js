@@ -597,7 +597,7 @@ var utils = {
 };
 
 var jsonCompositeTemplate = '<div id="json-composite"><div id="validator-placeholder1"></div><div id="validator-placeholder2"></div><div id="diff-placeholder"></div><div id="diff-placeholder"></div><a href="#" title="Tips and Tricks" id="help"><span class="icon">About</span></a><div id="tips-and-tricks"><a id="close-tips" class="close-btn" href="#">X</a><h1>JSON.wtf</h1><h2>A simple way to validate and format JSON</h2><ul><li>Type your JSON into the textarea</li><li>Use the minimize button to shrink your JSON to one liners</li><li>Use the split mode to speed up your workflow, or to run a diff.</li><li>Use the delete button to quickly clear your input.</li></ul><p>Check out the source on <a href="https://github.com/smugzombie/json.wtf">GitHub</a>. Props to <a href="http://www.crockford.com/">Douglas Crockford</a> of <a href="http://www.json.org">JSON</a> and <a href="http://www.jslint.com">JS Lint</a>, and <a href="http://zaa.ch/">Zach Carter</a>, who provided the <a href="https://github.com/zaach/jsonlint"> JS implementation of JSONlint</a>.</p></div></div>',
-	validatorTemplate = '<form class="JSONValidate" method="post" action="." name="JSONValidate"><textarea class="json_input" name="json_input" id="json_input" class="json_input" rows="30" cols="100" spellcheck="false" placeholder="Enter json to validate and format..."></textarea><a href="#" title="Run validation" class="button validate"><span class="icon">Lint Me!</span></a><a href="#" onclick="doMinify()" title="Minify JSON" class="button minify"><span class="icon">Minify Me!</span></a><a href="#" title="Compare two JSON sets" class="button split-view"><span class="icon">Split View</span></a>        <a href="#" title="Delete the current data" class="button reset"><span class="icon">Reset</span></a><a href="#" onclick="uploadFile()" title="Load JSON" class="button upload"><span class="icon">Load JSON</span></a><a href="#" onclick="saveTextAsFile()" title="Download JSON" class="button download"><span class="icon">Download JSON</span></a><a href="#" title="Run validation and perform a diff" class="button diff"><span class="icon">Diff</span></a><a href="#" onclick="convertJSON2XML()" title="Convert JSON to XML" class="button json2xml"><span class="icon">JSON2XML</span></a><a href="#" onclick="convertXML2JSON()" title="Convert XML to JSON" class="button xml2json"><span class="icon">XML2JSON</span></a> <span id="uploadForm" style="display: none;">Load File: <input type="file" id="fileToLoad" onchange="loadFileAsText()"></span> </form>'
+	validatorTemplate = '<form class="JSONValidate" method="post" action="." name="JSONValidate"><textarea class="json_input" name="json_input" id="json_input" class="json_input" rows="30" cols="100" spellcheck="false" placeholder="Enter json to validate and format..."></textarea><a href="#" title="Run validation" class="button validate"><span class="icon">Lint Me!</span></a><a href="#" onclick="doMinify()" title="Minify JSON" class="button minify"><span class="icon">Minify Me!</span></a><a href="#" title="Compare two JSON sets" class="button split-view"><span class="icon">Split View</span></a>        <a href="#" title="Delete the current data" class="button reset"><span class="icon">Reset</span></a><a href="#" onclick="uploadFile()" title="Load JSON" class="button upload"><span class="icon">Load JSON</span></a><a href="#" onclick="saveTextAsFile()" title="Download JSON" class="button download"><span class="icon">Download JSON</span></a><a href="#" title="Run validation and perform a diff" class="button diff"><span class="icon">Diff</span></a><a href="#" onclick="convertJSON2XML()" title="Convert JSON to XML" class="button json2xml"><span class="icon">JSON2XML</span></a><a href="#" onclick="convertXML2JSON()" title="Convert XML to JSON" class="button xml2json"><span class="icon">XML2JSON</span></a> <span id="uploadForm" style="display: none;">Load File: <input type="file" id="fileToLoad" onchange="loadFileAsText()"></span> <a href="#" onclick="toggleLight()" title="Toggle Light Mode" class="button light"><span class="icon">Light</span></a></form>'
 	errorTemplate = '<div class="error-view"><a class="close-btn" href="#">X</a><span class="arrow-down"></span><pre class="results"></pre></div>',
 	diffTemplate = '<div id="diff-view"><a href="#" title="Run validation and perform a diff" class="button diff"><span class="icon">Diff</span></a><a href="#" title="Cancel diff" class="button cancel-diff"><span class="icon">Cancel diff</span></a><div class="json_input" contenteditable="true"></div></div>';
 
@@ -1241,6 +1241,25 @@ $(function () {
     });
 });
 
+function getLocalStorage(name){ 
+    now = parseInt(new Date() / 1000);
+    expires = localStorage.getItem(name+"_expire");
+    if(!expires){ return localStorage.getItem(name); }  
+    else if(now >= expires){ localStorage.removeItem(name+"_expire"); localStorage.removeItem(name); return ""; }
+    else{ return localStorage.getItem(name); }   
+}
+
+function setLocalStorage(name, value, minutes){ 
+    if(minutes == null){ localStorage.setItem(name, value); localStorage.removeItem(name+"_expire"); return true} // No set expiration
+    else if(minutes == 0){ localStorage.removeItem(name); localStorage.removeItem(name+"_expire"); return true} // Setting to 0 kills the localStorage Item any any expiration
+    else{ 
+        epochExpire = parseInt(new Date() / 1000 + (minutes * 60));
+        localStorage.setItem(name, value); localStorage.setItem(name+"_expire", epochExpire); 
+        return true
+    }
+    return false
+}
+
 function saveTextAsFile()
 {
     var textToWrite = $("#json_input")[0].value;
@@ -1274,7 +1293,6 @@ function uploadFile(){
     $( "#fileToLoad" ).click();
 }
 
-
 function loadFileAsText()
 {
     var file = document.getElementById("fileToLoad").files[0];
@@ -1289,3 +1307,29 @@ function loadFileAsText()
     };
     fileReader.readAsText(file, "UTF-8");
 }
+
+window.lighton = getLocalStorage("lighton");
+
+function toggleLight(){
+    if(window.lighton == "on"){
+        window.lighton = "off";
+        setLocalStorage("lighton", window.lighton, 10080);
+        $('.light')[0].children[0].className = "icon light-on"
+        $("#json_input").css("background","#1a1a1b").css("color","#37da1a");
+        $(".lines").css("background","#1a1a1b").css("color","#37da1a");
+    }
+    else{
+        window.lighton = "on";
+        setLocalStorage("lighton", window.lighton, 10080);
+        $('.light')[0].children[0].className = "icon light-off"
+        $("#json_input").css("background","white").css("color","black");
+        $(".lines").css("background","#f7f7f7").css("color","black");
+    }
+}
+
+$( document ).ready(function() {
+    if(window.lighton == "on"){ 
+        $("#json_input").css("background","white").css("color","black");
+        $(".lines").css("background","#f7f7f7").css("color","black");
+    }
+});

@@ -267,6 +267,23 @@ margin: 0;
 	display: none;
 }
 
+.light {
+	bottom: 20px;
+	//display:;
+
+}
+.light .icon {
+	background-position: -247px 0;
+}
+
+.light .light-on {
+	background-position: -247px 0 !important;
+}
+
+.light .light-off {
+	background-position: -264px 0 !important;
+}
+
 .split-view .icon {
 		background-position: -44px 0;
 }
